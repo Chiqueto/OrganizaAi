@@ -44,13 +44,13 @@ public class UserService implements UserDetailsService {
     public String addUser(User user) {
         
         repository.findByEmail(user.getEmail())
-                             .orElseThrow(() -> new AlreadyExists("User with this email already exists!"));
+                             .orElseThrow(() -> new AlreadyExistsException("User with this email already exists!"));
  
         repository.findByCpf(user.getCpf())
-                             .orElseThrow(() -> new AlreadyExists("User with this CPF already exists!"));
+                             .orElseThrow(() -> new AlreadyExistsException("User with this CPF already exists!"));
 
         repository.findByRg(user.getRg())
-            .orElseThrow(() -> new AlreadyExists("User with this R.G already exists!"));
+            .orElseThrow(() -> new AlreadyExistsException("User with this R.G already exists!"));
 
         user.setPassword(encoder.encode(user.getPassword())); 
         repository.save(user);
