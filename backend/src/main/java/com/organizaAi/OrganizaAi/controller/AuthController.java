@@ -11,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import com.organizaAi.OrganizaAi.dto.UserRegisterDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +40,7 @@ public class AuthController {
         @ApiResponse(responseCode = "200", description = "Usuário registrado com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
-    public ResponseEntity<String> addNewUser(@RequestBody User user) {
+    public ResponseEntity<String> addNewUser(@RequestBody @Valid UserRegisterDTO user) {
         return ResponseEntity.ok(userService.addUser(user));
     }
 
