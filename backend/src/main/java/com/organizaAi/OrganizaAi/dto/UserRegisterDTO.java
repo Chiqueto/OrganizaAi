@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.CPF;
 import jakarta.validation.constraints.Pattern;
+import com.organizaAi.OrganizaAi.domain.Role;
+import java.util.Set;
 
 
 public record LoginDTO (
@@ -41,7 +43,8 @@ public record LoginDTO (
     @NotEmpty
     String state,
     @NotNull
-    String birthDate
+    String birthDate,
+    Set<Role> roles
 
     
     
