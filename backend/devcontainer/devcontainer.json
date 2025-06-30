@@ -1,0 +1,8 @@
+{
+  "name": "Java Dev",
+  "image": "mcr.microsoft.com/devcontainers/java:21",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/maven:1": {}
+  },
+  "postCreateCommand": "mvn clean install"
+}
