@@ -57,8 +57,11 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 
                 // Role-based endpoints
-                .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")
-                .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/auth/athlete/**").hasAuthority("ROLE_ATHLETE")
+                .requestMatchers("/auth/organizer/**").hasAuthority("ROLE_ORGANIZER")
+                .requestMatchers("/auth/refree/**").hasAuthority("ROLE_REFEREE")
+                .requestMatchers("/auth/coach/**").hasAuthority("ROLE_COACH")
+                .requestMatchers("/auth/coordinator/**").hasAuthority("ROLE_COORDINATOR")
                 
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
