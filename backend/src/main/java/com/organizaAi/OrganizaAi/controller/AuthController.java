@@ -59,19 +59,4 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/user/profile")
-    @Operation(summary = "Perfil do usuário", description = "Retorna informações do perfil do usuário logado")
-    @SecurityRequirement(name = "bearerAuth")
-    @ApiResponse(responseCode = "200", description = "Perfil retornado com sucesso")
-    public ResponseEntity<String> userProfile() {
-        return ResponseEntity.ok("Welcome to User Profile");
-    }
-
-    @GetMapping("/admin/profile")
-    @Operation(summary = "Perfil do admin", description = "Retorna informações do perfil do administrador")
-    @SecurityRequirement(name = "bearerAuth")
-    @ApiResponse(responseCode = "200", description = "Perfil de admin retornado com sucesso")
-    public ResponseEntity<String> adminProfile() {
-        return ResponseEntity.ok("Welcome to Admin Profile");
-    }
 }
