@@ -24,7 +24,7 @@ import jakarta.persistence.ManyToOne;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User_Roles {
+public class UserRoles {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

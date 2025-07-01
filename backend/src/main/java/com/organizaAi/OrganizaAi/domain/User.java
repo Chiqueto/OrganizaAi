@@ -12,7 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import com.organizaAi.OrganizaAi.domain.User_Roles;
+import com.organizaAi.OrganizaAi.domain.UserRoles;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
@@ -36,7 +36,7 @@ public class User {
     private String email;
     private String password;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<User_Roles> roles;
+    private Set<UserRoles> roles;
 
     private String cpf;
     private String rg;

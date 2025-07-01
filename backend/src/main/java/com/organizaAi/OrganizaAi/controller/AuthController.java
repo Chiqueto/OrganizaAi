@@ -19,6 +19,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.HttpStatus;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -37,11 +39,13 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Registro de novo usuário", description = "Registra um novo usuário no sistema")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuário registrado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos")
+        @ApiResponse(responseCode = "201", description = "Usuário registrado com sucesso"),
+        @ApiResponse(responseCode = "401", description = "Dados inválidos"),
+        @ApiResponse(responseCode = "409", description = "Usuário já existe"),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public ResponseEntity<String> addNewUser(@RequestBody @Valid UserRegisterDTO user) {
-        return ResponseEntity.ok(userService.addUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
     }
 
     @PostMapping("/login")
