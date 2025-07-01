@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import com.organizaAi.OrganizaAi.dto.UserRegisterDTO;
+import com.organizaAi.OrganizaAi.dto.UserAuthenticatedDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,11 +31,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     @Operation(summary = "Registro de novo usuário", description = "Registra um novo usuário no sistema")
@@ -44,8 +40,8 @@ public class AuthController {
         @ApiResponse(responseCode = "409", description = "Usuário já existe"),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    public ResponseEntity<String> addNewUser(@RequestBody @Valid UserRegisterDTO user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
+    public UserAuthenticatedDTO addNewUser(@RequestBody @Valid UserRegisterDTO user) {
+        return userService.addUser(user);
     }
 
     @PostMapping("/login")
@@ -54,15 +50,8 @@ public class AuthController {
         @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
         @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
     })
-    public ResponseEntity<String> authenticateAndGetToken(@RequestBody LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())
-        );
-        if (authentication.isAuthenticated()) {
-            return ResponseEntity.ok(jwtService.generateToken(loginDTO.email()));
-        } else {
-            throw new UsernameNotFoundException("Invalid user request!");
-        }
+    public UserAuthenticatedDTO authenticateAndGetToken(@RequestBody LoginDTO loginDTO) {
+        return userService.authenticateAndGetToken(loginDTO);
     }
 
 }

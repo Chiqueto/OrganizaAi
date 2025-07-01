@@ -14,11 +14,13 @@ public class UserInfoDetails implements UserDetails {
 
     private String email;
     private String password;
+    private String id;
     private List<GrantedAuthority> authorities;
 
     public UserInfoDetails(User user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
+        this.id = user.getId();
         this.authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole().name()))
                 .collect(Collectors.toList());
@@ -33,6 +35,10 @@ public class UserInfoDetails implements UserDetails {
     public String getPassword() {
         return password;
     }
+
+    public String getId() {
+        return id;
+    }   
 
     @Override
     public String getUsername() {

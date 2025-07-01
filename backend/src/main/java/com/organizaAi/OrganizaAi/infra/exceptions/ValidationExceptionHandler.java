@@ -37,4 +37,13 @@ public class ValidationExceptionHandler {
         return ResponseEntity.status(409).body(response);
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleNotFound(NotFoundException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getField(), ex.getMessage());     
+
+        ErrorResponseDTO response = new ErrorResponseDTO(404, errors);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
 }

@@ -14,6 +14,14 @@ import com.organizaAi.OrganizaAi.dto.UserRegisterDTO;
 import com.organizaAi.OrganizaAi.infra.exceptions.NotFoundException;
 import com.organizaAi.OrganizaAi.infra.exceptions.AlreadyExistsException;
 import com.organizaAi.OrganizaAi.repository.UserRolesRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import com.organizaAi.OrganizaAi.service.JwtService;
+import com.organizaAi.OrganizaAi.service.UserInfoDetails;
+
+import com.organizaAi.OrganizaAi.dto.LoginDTO;
+import com.organizaAi.OrganizaAi.dto.UserAuthenticatedDTO;
 
 
 import java.util.Optional;
@@ -25,6 +33,8 @@ public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final UserRolesRepository userRolesRepository;
     private final PasswordEncoder encoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     // Method to load user details by username (email)
     @Override
@@ -33,7 +43,7 @@ public class UserService implements UserDetailsService {
         Optional<User> userInfo = repository.findByEmail(email);
         
         if (userInfo.isEmpty()) {
-            throw new NotFoundException("User not found with email: " + email);
+            throw new NotFoundException("user", "User not found");
         }
         
         // Convert User to UserDetails (UserInfoDetails)
@@ -41,7 +51,7 @@ public class UserService implements UserDetailsService {
         return new UserInfoDetails(user);
     }
 
-    public String addUser(UserRegisterDTO userDto) {
+    public UserAuthenticatedDTO addUser(UserRegisterDTO userDto) {
         
         if (repository.findByEmail(userDto.email()).isPresent()) {
             throw new AlreadyExistsException("email", "User with this email already exists!");
@@ -83,6 +93,31 @@ public class UserService implements UserDetailsService {
                         .build());
             });
         }
-        return "User added successfully!";
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        return new UserAuthenticatedDTO(
+                201,
+                "User added successfully!",
+                authenticationToken.getCredentials().toString(),
+                user.getId()
+        );
+    }
+
+    public UserAuthenticatedDTO authenticateAndGetToken(LoginDTO loginDTO) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())
+        );
+
+        if (authentication.isAuthenticated()) {
+            return new UserAuthenticatedDTO(
+                    200,
+                    "Login successful",
+                    jwtService.generateToken(loginDTO.email()),
+                    ((UserInfoDetails) loadUserByUsername(loginDTO.email())).getId()
+            );
+        } else {
+            throw new NotFoundException("user", "User not found");
+        }
     }
 }
