@@ -48,7 +48,9 @@ public class AuthController {
     @Operation(summary = "Login de usuário", description = "Autentica usuário e retorna token JWT")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
-        @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
+        @ApiResponse(responseCode = "403", description = "Email ou senha inválidos"),
+        @ApiResponse(responseCode = "401", description = "Dados inválidos"),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     public UserAuthenticatedDTO authenticateAndGetToken(@RequestBody LoginDTO loginDTO) {
         return userService.authenticateAndGetToken(loginDTO);

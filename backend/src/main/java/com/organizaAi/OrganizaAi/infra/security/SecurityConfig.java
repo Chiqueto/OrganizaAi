@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,17 +19,29 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import com.organizaAi.OrganizaAi.infra.exceptions.CustomAccessDeniedHandler; 
+import com.organizaAi.OrganizaAi.infra.exceptions.CustomAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity 
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-    public SecurityConfig(@Lazy UserDetailsService userDetailsService, JwtService jwtService) {
+    public SecurityConfig(@Lazy UserDetailsService userDetailsService,
+                          JwtService jwtService,
+                          CustomAccessDeniedHandler accessDeniedHandler,
+                          CustomAuthenticationEntryPoint authenticationEntryPoint) { 
+                            
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Bean
@@ -45,38 +56,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Disable CSRF (not needed for stateless JWT)
             .csrf(csrf -> csrf.disable())
 
-            // Configure endpoint authorization
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
                 .requestMatchers("/auth/login", "/auth/register", "/auth/generateToken").permitAll()
-                
-                // Swagger/OpenAPI endpoints
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                
-                // Role-based endpoints
                 .requestMatchers("/auth/athlete/**").hasAuthority("ROLE_ATHLETE")
                 .requestMatchers("/auth/organizer/**").hasAuthority("ROLE_ORGANIZER")
                 .requestMatchers("/auth/refree/**").hasAuthority("ROLE_REFEREE")
                 .requestMatchers("/auth/coach/**").hasAuthority("ROLE_COACH")
                 .requestMatchers("/auth/coordinator/**").hasAuthority("ROLE_COORDINATOR")
-                
-                // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
 
-            // Stateless session (required for JWT)
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(authenticationEntryPoint) // Trata erros 401
+                .accessDeniedHandler(accessDeniedHandler)         // Trata erros 403
+            )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
-            // Set custom authentication provider
             .authenticationProvider(authenticationProvider())
-            
-            // Add JWT filter before Spring Security's default filter
             .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    
     }
 
     /* 

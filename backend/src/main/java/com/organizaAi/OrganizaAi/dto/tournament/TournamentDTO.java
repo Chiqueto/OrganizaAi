@@ -33,9 +33,9 @@ public record TournamentDTO(
     Date end_date, 
     String description,
     String image,
-    @NotBlank(message = "Type cannot be blank")
+    @NotNull(message = "Type cannot be blank")
     TournamentType type,
-    @NotBlank(message = "Category cannot be blank")
+    @NotNull(message = "Category cannot be blank")
     Category category, 
     String rules, 
     String prizes,

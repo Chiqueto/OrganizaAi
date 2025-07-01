@@ -46,4 +46,13 @@ public class ValidationExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorized(UnauthorizedException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());       
+
+        ErrorResponseDTO response = new ErrorResponseDTO(403, errors);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
 }

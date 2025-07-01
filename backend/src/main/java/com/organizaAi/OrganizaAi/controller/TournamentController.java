@@ -28,12 +28,13 @@ public class TournamentController {
 
     private final TournamentService tournamentService;
 
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasAuthority('ROLE_ORGANIZER')")
     @PostMapping("/")
     @Operation(summary = "Registro de novo torneio", description = "Registra um novo torneio no sistema")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Torneio registrado com sucesso"),
         @ApiResponse(responseCode = "401", description = "Dados inválidos"),
+        @ApiResponse(responseCode = "403", description = "Acesso negado - usuário não é um organizador"),
         @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
         @ApiResponse(responseCode = "409", description = "Torneio já existe"),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor")

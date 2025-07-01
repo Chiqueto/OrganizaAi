@@ -13,6 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.Date;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 
 import com.organizaAi.OrganizaAi.enums.Category;
 import com.organizaAi.OrganizaAi.enums.TournamentType;
@@ -44,7 +47,9 @@ public class Tournament {
     private Date inserted_at;
     private Date updated_at;
     private String image;
+    @Enumerated(value= EnumType.STRING)
     private TournamentType type;
+    @Enumerated(value= EnumType.STRING)
     private Category category;
     private String rules; 
     private String prizes; 

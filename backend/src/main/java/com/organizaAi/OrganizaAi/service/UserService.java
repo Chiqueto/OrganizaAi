@@ -19,6 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import com.organizaAi.OrganizaAi.service.JwtService;
 import com.organizaAi.OrganizaAi.service.UserInfoDetails;
+import com.organizaAi.OrganizaAi.infra.exceptions.UnauthorizedException;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import com.organizaAi.OrganizaAi.dto.LoginDTO;
 import com.organizaAi.OrganizaAi.dto.UserAuthenticatedDTO;
@@ -105,19 +107,22 @@ public class UserService implements UserDetailsService {
     }
 
     public UserAuthenticatedDTO authenticateAndGetToken(LoginDTO loginDTO) {
+    try {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())
         );
 
-        if (authentication.isAuthenticated()) {
-            return new UserAuthenticatedDTO(
-                    200,
-                    "Login successful",
-                    jwtService.generateToken(loginDTO.email()),
-                    ((UserInfoDetails) loadUserByUsername(loginDTO.email())).getId()
-            );
-        } else {
-            throw new NotFoundException("user", "User not found");
-        }
+        UserInfoDetails userDetails = (UserInfoDetails) loadUserByUsername(loginDTO.email());
+
+        return new UserAuthenticatedDTO(
+                200,
+                "Login successful",
+                jwtService.generateToken(loginDTO.email()),
+                userDetails.getId()
+        );
+    } catch (BadCredentialsException | UsernameNotFoundException e) {
+        throw new UnauthorizedException("Invalid email or password");
     }
+}
+
 }
