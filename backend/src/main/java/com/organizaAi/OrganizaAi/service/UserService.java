@@ -40,7 +40,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws NotFoundException {
         // Fetch user from the database by email (username)
-        Optional<User> userInfo = repository.findByEmail(email);
+        Optional<User> userInfo = repository.findByEmailWithRoles(email);
         
         if (userInfo.isEmpty()) {
             throw new NotFoundException("user", "User not found");

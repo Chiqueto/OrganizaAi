@@ -17,6 +17,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.FetchType;
 
 
 
@@ -35,7 +36,7 @@ public class User {
     private String name;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserRoles> roles;
 
     private String cpf;
@@ -48,4 +49,7 @@ public class User {
     private Date inserted_at;
     private Date updated_at;
     private Boolean active;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    private Set<Tournament> tournaments; 
 }
