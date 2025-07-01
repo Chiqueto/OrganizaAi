@@ -1,7 +1,6 @@
 package com.organizaAi.OrganizaAi.service;
 
 import com.organizaAi.OrganizaAi.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,15 +15,10 @@ import com.organizaAi.OrganizaAi.infra.exceptions.AlreadyExistsException;
 import com.organizaAi.OrganizaAi.repository.UserRolesRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import com.organizaAi.OrganizaAi.service.JwtService;
-import com.organizaAi.OrganizaAi.service.UserInfoDetails;
 import com.organizaAi.OrganizaAi.infra.exceptions.UnauthorizedException;
 import org.springframework.security.authentication.BadCredentialsException;
-
 import com.organizaAi.OrganizaAi.dto.LoginDTO;
 import com.organizaAi.OrganizaAi.dto.UserAuthenticatedDTO;
-
 
 import java.util.Optional;
 
@@ -96,33 +90,35 @@ public class UserService implements UserDetailsService {
             });
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        // Generate JWT token for the newly registered user
+        String token = jwtService.generateToken(user.getEmail());
+        
         return new UserAuthenticatedDTO(
                 201,
                 "User added successfully!",
-                authenticationToken.getCredentials().toString(),
+                token,
                 user.getId()
         );
     }
 
     public UserAuthenticatedDTO authenticateAndGetToken(LoginDTO loginDTO) {
-    try {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())
-        );
+        try {
+            // Authenticate user credentials
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())
+            );
 
-        UserInfoDetails userDetails = (UserInfoDetails) loadUserByUsername(loginDTO.email());
+            UserInfoDetails userDetails = (UserInfoDetails) loadUserByUsername(loginDTO.email());
 
-        return new UserAuthenticatedDTO(
-                200,
-                "Login successful",
-                jwtService.generateToken(loginDTO.email()),
-                userDetails.getId()
-        );
-    } catch (BadCredentialsException | UsernameNotFoundException e) {
-        throw new UnauthorizedException("Invalid email or password");
+            return new UserAuthenticatedDTO(
+                    200,
+                    "Login successful",
+                    jwtService.generateToken(loginDTO.email()),
+                    userDetails.getId()
+            );
+        } catch (BadCredentialsException | UsernameNotFoundException e) {
+            throw new UnauthorizedException("Invalid email or password");
+        }
     }
-}
 
 }

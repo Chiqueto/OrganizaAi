@@ -18,6 +18,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.FetchType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 
 
@@ -25,10 +28,12 @@ import jakarta.persistence.FetchType;
 @Table(name = "users", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"email", "cpf", "rg"})
 })
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"roles", "tournaments"}) // <-- A MÁGICA ESTÁ AQUI
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

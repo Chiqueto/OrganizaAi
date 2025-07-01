@@ -1,11 +1,13 @@
 package com.organizaAi.OrganizaAi.service;
 
 import com.organizaAi.OrganizaAi.repository.UserRepository;
+import com.organizaAi.OrganizaAi.domain.Role;
 import com.organizaAi.OrganizaAi.domain.Tournament;
 import com.organizaAi.OrganizaAi.domain.User;
 import com.organizaAi.OrganizaAi.dto.tournament.TournamentDTO;
 import com.organizaAi.OrganizaAi.dto.commom.CreatedResponseDTO;
 import com.organizaAi.OrganizaAi.infra.exceptions.NotFoundException;
+import com.organizaAi.OrganizaAi.infra.exceptions.UnauthorizedException;
 import com.organizaAi.OrganizaAi.repository.TournamentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,10 @@ public class TournamentService {
 
         User user = userRepository.findById(tournamentDTO.admin_id())
                 .orElseThrow(() -> new NotFoundException("user", "User not found"));
+
+        if (!user.getRoles().stream().anyMatch(role -> role.getRole().equals(Role.ORGANIZER))) {
+            throw new UnauthorizedException("You do not have permission to create a tournament");
+        }
 
         Tournament tournament = Tournament.builder()
                 .name(tournamentDTO.name())
