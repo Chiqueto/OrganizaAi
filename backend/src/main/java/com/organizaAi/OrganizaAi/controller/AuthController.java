@@ -40,8 +40,9 @@ public class AuthController {
         @ApiResponse(responseCode = "409", description = "Usuário já existe"),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    public UserAuthenticatedDTO addNewUser(@RequestBody @Valid UserRegisterDTO user) {
-        return userService.addUser(user);
+    public ResponseEntity<UserAuthenticatedDTO> addNewUser(@RequestBody @Valid UserRegisterDTO user) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.addUser(user));
     }
 
     @PostMapping("/login")

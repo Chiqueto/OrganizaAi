@@ -4,18 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
+import org.hibernate.annotations.SQLRestriction;
+import org.locationtech.jts.geom.Point;
 
 import com.organizaAi.OrganizaAi.enums.Category;
 import com.organizaAi.OrganizaAi.enums.TournamentType;
@@ -26,6 +30,7 @@ import com.organizaAi.OrganizaAi.enums.TournamentType;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("active = true")
 public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -53,6 +58,8 @@ public class Tournament {
     private Category category;
     private String rules; 
     private String prizes; 
-    private String registration_fee; 
+    private BigDecimal registration_fee; 
     private Date registration_deadline;
+    @Column(columnDefinition = "geography(Point,4326)")
+    private Point location;
 }
