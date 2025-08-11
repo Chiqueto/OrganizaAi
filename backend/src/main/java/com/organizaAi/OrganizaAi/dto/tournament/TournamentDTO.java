@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.organizaAi.OrganizaAi.enums.Category;
@@ -34,10 +35,10 @@ public record TournamentDTO(
     String district,
     @NotNull(message = "Start date should not be null")
     @FutureOrPresent(message = "Start date must be in the present or future")
-    Date start_date, 
+    LocalDateTime start_date,
     @NotNull(message = "End date should not be null")
     @Future(message = "End date must be in the future")
-    Date end_date, 
+    LocalDateTime end_date,
     String description,
     String image,
     @NotNull(message = "Type cannot be blank")
@@ -50,7 +51,7 @@ public record TournamentDTO(
     BigDecimal registration_fee, 
     @NotNull(message = "Registration deadline cannot be blank")
     @FutureOrPresent(message = "Registration deadline must be in the present or future")
-    Date registration_deadline,
+    LocalDateTime registration_deadline,
     @NotNull(message = "Latitude is required.")
     @Min(value = -90, message = "Latitude must be min -90.")
     @Max(value = 90, message = "Latitude must be max 90.")

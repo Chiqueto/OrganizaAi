@@ -13,6 +13,8 @@ import com.organizaAi.OrganizaAi.infra.exceptions.UnauthorizedException;
 import com.organizaAi.OrganizaAi.repository.TournamentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -64,8 +66,8 @@ public class TournamentService {
                 .registration_fee(tournamentDTO.registration_fee())
                 .registration_deadline(tournamentDTO.registration_deadline())
                 .active(true)
-                .inserted_at(new Date(System.currentTimeMillis()))
-                .updated_at(new Date(System.currentTimeMillis()))
+                .inserted_at(LocalDateTime.now())
+                .updated_at(LocalDateTime.now())
                 .location(locationPoint)
                 .build();
         tournamentRepository.save(tournament);

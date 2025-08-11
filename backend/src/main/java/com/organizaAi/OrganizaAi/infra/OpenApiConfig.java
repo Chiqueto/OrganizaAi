@@ -19,6 +19,7 @@ public OpenAPI customOpenAPI() {
 
     Server server = new Server();
     server.setUrl("https://zany-lamp-p6v9qww557xc6xr4-8080.app.github.dev/");
+    server.setUrl("http://localhost:8080/");
 
     return new OpenAPI()
             .info(new Info().title("OrganizaAi API").version("1.0").description("Documentação da API OrganizaAi"))

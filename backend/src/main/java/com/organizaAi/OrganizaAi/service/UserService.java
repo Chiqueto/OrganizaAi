@@ -20,6 +20,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import com.organizaAi.OrganizaAi.dto.LoginDTO;
 import com.organizaAi.OrganizaAi.dto.UserAuthenticatedDTO;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -47,6 +48,8 @@ public class UserService implements UserDetailsService {
         return new UserInfoDetails(user);
     }
 
+
+
     public UserAuthenticatedDTO addUser(UserRegisterDTO userDto) {
         
         if (repository.findByEmail(userDto.email()).isPresent()) {
@@ -73,8 +76,8 @@ public class UserService implements UserDetailsService {
                 .state(userDto.state())
                 .birthDate(userDto.birthDate())
                 .active(true)
-                .inserted_at(new java.sql.Date(System.currentTimeMillis()))
-                .updated_at(new java.sql.Date(System.currentTimeMillis()))
+                .inserted_at(LocalDateTime.now())
+                .updated_at(LocalDateTime.now())
                 .build();
 
         repository.save(user);
@@ -84,8 +87,8 @@ public class UserService implements UserDetailsService {
                 userRolesRepository.save(UserRoles.builder()
                         .user(user)
                         .role(role)
-                        .inserted_at(new java.sql.Date(System.currentTimeMillis()))
-                        .updated_at(new java.sql.Date(System.currentTimeMillis()))
+                        .inserted_at(LocalDateTime.now())
+                        .updated_at(LocalDateTime.now())
                         .build());
             });
         }

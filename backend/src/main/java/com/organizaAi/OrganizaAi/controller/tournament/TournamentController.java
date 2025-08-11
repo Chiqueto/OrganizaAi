@@ -1,4 +1,4 @@
-package com.organizaAi.OrganizaAi.controller;
+package com.organizaAi.OrganizaAi.controller.tournament;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.organizaAi.OrganizaAi.dto.tournament.GetTournamentDTO;
 import com.organizaAi.OrganizaAi.dto.tournament.NearbyTournamentsResponseDTO;
 import com.organizaAi.OrganizaAi.dto.tournament.TournamentDTO;
 import com.organizaAi.OrganizaAi.dto.commom.CreatedResponseDTO;
@@ -18,11 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.validation.Valid;
@@ -37,7 +32,7 @@ public class TournamentController {
 
     private final TournamentService tournamentService;
 
-    @PreAuthorize("hasAuthority('ROLE_ORGANIZER')")
+    @PreAuthorize("hasRole('ORGANIZER')")
     @PostMapping("/")
     @Operation(summary = "Registro de novo torneio", description = "Registra um novo torneio no sistema")
     @ApiResponses(value = {

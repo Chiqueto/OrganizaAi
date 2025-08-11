@@ -70,8 +70,8 @@ public class SecurityConfig {
             )
 
             .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(authenticationEntryPoint) // Trata erros 401
-                .accessDeniedHandler(accessDeniedHandler)         // Trata erros 403
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())

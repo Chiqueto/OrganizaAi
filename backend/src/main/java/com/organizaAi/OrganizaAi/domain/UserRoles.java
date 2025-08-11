@@ -1,6 +1,7 @@
 package com.organizaAi.OrganizaAi.domain;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
@@ -35,6 +36,6 @@ public class UserRoles {
     @Enumerated(EnumType.STRING)
     private Role role;
     
-    private Date inserted_at;
-    private Date updated_at;
+    private LocalDateTime inserted_at;
+    private LocalDateTime updated_at;
 }

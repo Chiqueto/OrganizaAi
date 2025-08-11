@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Pattern;
 import com.organizaAi.OrganizaAi.domain.Role;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 
@@ -48,7 +50,7 @@ public record UserRegisterDTO (
     String state,
 
     @NotNull(message = "Birth date should not be null")
-    Date birthDate,
+    LocalDate birthDate,
 
     @NotNull(message = "Roles should not be null")
     Set<Role> roles
