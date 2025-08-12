@@ -30,26 +30,37 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamRepository repository;
     private final TournamentRepository tournamentRepository;
-    @Autowired
-    private TeamMapper teamMapper;
+    private final TeamMapper teamMapper;
     @Transactional
     public TeamResponse createTeam(TeamDTO team){
 
-        //Verificar se usuário existe
-        User responsibleUser = userRepository.findById(team.responsible_id())
-                .orElseThrow(() -> new NotFoundException("responsible_id" ,"Usuário responsável não encontrado com o ID: " + team.responsible_id()));
+        User responsible = userRepository.findById(team.responsible_id())
+                .orElseThrow(() -> new NotFoundException("responsible_id",
+                        "Usuário responsável não encontrado com o ID: " + team.responsible_id()));
 
-        if (responsibleUser.getRoles().stream()
-                .noneMatch(role -> role.getRole().equals(Role.COACH) || role.getRole().equals(Role.ATHLETE))) {
+        boolean allowed = responsible.getRoles().stream()
+                .anyMatch(r -> r.getRole() == Role.COACH || r.getRole() == Role.ATHLETE);
+        if (!allowed) {
             throw new UnauthorizedException("Você não tem permissão para criar um time");
         }
 
-        List<User> players = userRepository.findAllById(team.players());
-        List<Tournament> tournaments = tournamentRepository.findAllById(team.tournaments());
+        // Carrega e valida players
+        List<String> playerIds = team.players(); // ou UUID, conforme seu DTO
+        List<User> players = userRepository.findAllById(playerIds);
+        if (players.size() != playerIds.stream().distinct().count()) {
+            throw new NotFoundException("players", "Um ou mais jogadores não existem.");
+        }
+
+        // Carrega e valida tournaments
+        List<String> tournamentIds = team.tournaments();
+        List<Tournament> tournaments = tournamentRepository.findAllById(tournamentIds);
+        if (tournaments.size() != tournamentIds.stream().distinct().count()) {
+            throw new NotFoundException("tournaments", "Um ou mais torneios não existem.");
+        }
 
         Team newTeam = Team.builder()
                 .name(team.name())
-                .responsible(responsibleUser)
+                .responsible(responsible)
                 .players(players)
                 .tournaments(tournaments)
                 .inserted_at(LocalDateTime.now())
@@ -57,7 +68,11 @@ public class TeamService {
 
        Team savedTeam = repository.save(newTeam);
 
-        return teamMapper.toTeamResponse(savedTeam);
+       TeamResponse response = teamMapper.toTeamResponse(savedTeam);
+
+       System.out.println(response);
+
+        return response;
 
     }
 
