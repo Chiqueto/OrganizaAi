@@ -6,12 +6,17 @@ import com.organizaAi.OrganizaAi.domain.User;
 import com.organizaAi.OrganizaAi.domain.team.Team;
 import com.organizaAi.OrganizaAi.dto.commom.ApiResponse;
 import com.organizaAi.OrganizaAi.dto.team.TeamDTO;
+import com.organizaAi.OrganizaAi.dto.team.TeamResponse;
+import com.organizaAi.OrganizaAi.dto.user.PlayerSummary;
+import com.organizaAi.OrganizaAi.dto.user.UserSummary;
 import com.organizaAi.OrganizaAi.infra.exceptions.NotFoundException;
 import com.organizaAi.OrganizaAi.infra.exceptions.UnauthorizedException;
 import com.organizaAi.OrganizaAi.repository.TeamRepository;
 import com.organizaAi.OrganizaAi.repository.TournamentRepository;
 import com.organizaAi.OrganizaAi.repository.UserRepository;
+import com.organizaAi.OrganizaAi.service.mapper.TeamMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +30,11 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamRepository repository;
     private final TournamentRepository tournamentRepository;
-
+    @Autowired
+    private TeamMapper teamMapper;
     @Transactional
-    public Team createTeam(TeamDTO team){
+    public TeamResponse createTeam(TeamDTO team){
+
         //Verificar se usuário existe
         User responsibleUser = userRepository.findById(team.responsible_id())
                 .orElseThrow(() -> new NotFoundException("responsible_id" ,"Usuário responsável não encontrado com o ID: " + team.responsible_id()));
@@ -48,9 +55,9 @@ public class TeamService {
                 .inserted_at(LocalDateTime.now())
                 .build();
 
-       return repository.save(newTeam);
+       Team savedTeam = repository.save(newTeam);
 
-
+        return teamMapper.toTeamResponse(savedTeam);
 
     }
 

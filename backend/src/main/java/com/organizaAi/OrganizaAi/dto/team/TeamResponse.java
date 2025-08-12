@@ -1,5 +1,9 @@
 package com.organizaAi.OrganizaAi.dto.team;
 
+import com.organizaAi.OrganizaAi.dto.tournament.TournamentSummary;
+import com.organizaAi.OrganizaAi.dto.user.PlayerSummary;
+import com.organizaAi.OrganizaAi.dto.user.UserSummary;
+
 import java.util.List;
 
 public record TeamResponse(
@@ -10,6 +14,3 @@ public record TeamResponse(
         List<TournamentSummary> tournaments
 ) {}
 
-public record UserSummary(String id, String name, String email) {}
-public record PlayerSummary(String id, String name) {}
-public record TournamentSummary(String id, String name) {}
