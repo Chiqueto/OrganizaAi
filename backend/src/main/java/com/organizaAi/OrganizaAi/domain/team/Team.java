@@ -2,6 +2,7 @@ package com.organizaAi.OrganizaAi.domain.team;
 
 import com.organizaAi.OrganizaAi.domain.Tournament;
 import com.organizaAi.OrganizaAi.domain.User;
+import com.organizaAi.OrganizaAi.enums.TournamentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,4 +34,6 @@ public class Team {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> players;
+    @Enumerated(EnumType.STRING)
+    private TournamentType modality;
 }

@@ -17,6 +17,8 @@ import com.organizaAi.OrganizaAi.repository.UserRepository;
 import com.organizaAi.OrganizaAi.service.mapper.TeamMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,16 @@ public class TeamService {
        System.out.println(response);
 
         return response;
+
+    }
+
+    public Page<TeamResponse> getTeamsByResponsable(String id, Pageable pageable){
+        User responsible = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("responsible_id",
+                        "Usuário responsável não encontrado com o ID: " + id));
+
+        Page<Team> page = repository.findAllByResponsible(responsible, pageable);
+        return page.map(teamMapper::toTeamResponse); // mapeia cada item
 
     }
 

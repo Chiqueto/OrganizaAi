@@ -2,7 +2,9 @@ package com.organizaAi.OrganizaAi.controller.team;
 
 import com.organizaAi.OrganizaAi.domain.team.Team;
 import com.organizaAi.OrganizaAi.dto.commom.ApiError;
+import com.organizaAi.OrganizaAi.dto.commom.ApiMeta;
 import com.organizaAi.OrganizaAi.dto.commom.ApiResponse;
+import com.organizaAi.OrganizaAi.dto.commom.Pagination;
 import com.organizaAi.OrganizaAi.dto.team.TeamDTO;
 import com.organizaAi.OrganizaAi.dto.team.TeamResponse;
 import com.organizaAi.OrganizaAi.infra.exceptions.NotFoundException;
@@ -11,12 +13,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("team")
@@ -38,5 +42,36 @@ public class TeamController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true, team, null, null, "Time cadastrado com sucesso!"));
+    }
+
+    @GetMapping("/{responsibleId}")
+    public ResponseEntity<ApiResponse<List<TeamResponse>>> list(
+            @RequestParam String responsibleId,
+            @PageableDefault(size = 20, sort = "name") Pageable pageable
+    ) {
+        Page<TeamResponse> page = service.getTeamsByResponsable(responsibleId, pageable);
+
+        ApiMeta meta = new ApiMeta(new Pagination(
+                page.getNumber(),           // página atual (0-based)
+                page.getSize(),             // tamanho
+                page.getTotalElements(),    // total de registros
+                page.getTotalPages(),       // total de páginas
+                page.getSort().toString(),  // ordenação
+                page.isFirst(),
+                page.isLast(),
+                page.hasNext(),
+                page.hasPrevious()
+            )
+        );
+
+        ApiResponse<List<TeamResponse>> body = new ApiResponse<>(
+                true,
+                page.getContent(), // só a lista da página
+                null,
+                meta,
+                "Lista de times"
+        );
+
+        return ResponseEntity.ok(body);
     }
 }
