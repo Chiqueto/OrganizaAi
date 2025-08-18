@@ -2,7 +2,7 @@
 # ESTÁGIO 1: O "BUILDER" - Compila a aplicação
 # Usa uma imagem com o JDK completo e ferramentas de build.
 # =========================================================================
-FROM eclipse-temurin:17-jdk-jammy as builder
+FROM eclipse-temurin:21-jdk-jammy as builder
 
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
@@ -26,7 +26,7 @@ RUN ./mvnw package -DskipTests
 # ESTÁGIO 2: A IMAGEM FINAL - Otimizada para produção
 # Usa uma imagem mínima, apenas com o Java Runtime (JRE).
 # =========================================================================
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:21-jre-jammy
 
 # Define o diretório de trabalho
 WORKDIR /app
